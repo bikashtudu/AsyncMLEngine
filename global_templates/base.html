@@ -12,6 +12,29 @@
     {% load static %}
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
 </head>
+<script type="text/javascript">
+    const wsStart = window.location.protocol === "https:" ? "wss://" : "ws://";
+    const endpoint = wsStart + window.location.host + "/ws/login/";
+    const socket = new WebSocket(endpoint);
+
+    socket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        console.log("Message:", data.message);
+    }
+
+    socket.onopen = function (e) {
+        console.log("WebSocket open");
+        socket.send(JSON.stringify({ 'message': 'Hello, server!' }));
+    }
+
+    socket.onerror = function (e) {
+        console.error("WebSocket error:", e);
+    }
+
+    socket.onclose = function (e) {
+        console.error("WebSocket closed unexpectedly");
+    }
+</script>
 
 <body>
     <header>

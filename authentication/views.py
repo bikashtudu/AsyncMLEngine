@@ -1,6 +1,6 @@
 # from django.shortcuts import render
-from django.contrib.auth import authenticate, login
-from .forms import LoginForm
+from django.contrib.auth import authenticate, login, logout
+from .forms import LoginForm, RegistrationForm
 from django.shortcuts import render, redirect
 
 
@@ -20,7 +20,37 @@ def login_view(request):
                     request,
                     "authentication/login.html",
                     {"form": form, "error_message": "Invalid credentials"},
+                    status=400,
                 )
         else:
-            form = LoginForm()
             return render(request, "authentication/login.html", {"form": form})
+    else:
+        form = LoginForm()
+        return render(request, "authentication/login.html", {"form": form})
+
+
+def registration_view(request):
+    if request.method == "POST":
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("login")
+        else:
+            return render(
+                request,
+                "authentication/registration.html",
+                {"form": form, "error_message": form.errors},
+                status=400,
+            )
+    else:
+        form = RegistrationForm()
+        return render(
+            request,
+            "authentication/registration.html",
+            {"form": form},
+        )
+
+
+def logout_view(request):
+    logout(request)
+    return redirect("home")

@@ -1,5 +1,5 @@
 """
-URL configuration for samify project.
+URL configuration for asyncmlengine project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
@@ -20,7 +20,7 @@ from django.urls import include, path, re_path
 
 urlpatterns = [
     # path("admin/", admin.site.urls),
-    path("auth/", include("authentication.urls")),
+    path("auth/", include("user.urls")),
     # path("api/", include("api.urls")),
     path("", include("ui.urls")),
 ]

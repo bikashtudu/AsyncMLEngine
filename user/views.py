@@ -18,15 +18,15 @@ def login_view(request):
             else:
                 return render(
                     request,
-                    "authentication/login.html",
+                    "user/login.html",
                     {"form": form, "error_message": "Invalid credentials"},
                     status=400,
                 )
         else:
-            return render(request, "authentication/login.html", {"form": form})
+            return render(request, "user/login.html", {"form": form})
     else:
         form = LoginForm()
-        return render(request, "authentication/login.html", {"form": form})
+        return render(request, "user/login.html", {"form": form})
 
 
 def registration_view(request):
@@ -38,7 +38,7 @@ def registration_view(request):
         else:
             return render(
                 request,
-                "authentication/registration.html",
+                "user/registration.html",
                 {"form": form, "error_message": form.errors},
                 status=400,
             )
@@ -46,7 +46,7 @@ def registration_view(request):
         form = RegistrationForm()
         return render(
             request,
-            "authentication/registration.html",
+            "user/registration.html",
             {"form": form},
         )
 

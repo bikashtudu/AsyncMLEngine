@@ -12,6 +12,7 @@
     {% load static %}
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
 </head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type="text/javascript">
     const wsStart = window.location.protocol === "https:" ? "wss://" : "ws://";
     const endpoint = wsStart + window.location.host + "/ws/login/";
@@ -20,6 +21,18 @@
     socket.onmessage = function (e) {
         const data = JSON.parse(e.data);
         console.log("Message:", data.message);
+        const message = data.message;
+        // const notificationBanner = document.getElementById('notification-banner');
+
+        // notificationBanner.innerText = message; // Set the message text
+        // notificationBanner.style.display = 'block'; // Show the banner
+
+        // // alert('{{ message }}');
+        // // Optionally hide the banner after a few seconds
+        // setTimeout(() => {
+        //     notificationBanner.style.display = 'none';
+        // }, 5000);
+        displayAlert(message);
     }
 
     socket.onopen = function (e) {
@@ -33,6 +46,20 @@
 
     socket.onclose = function (e) {
         console.error("WebSocket closed unexpectedly");
+    }
+
+    function displayAlert(message) {
+        const alertContainer = document.getElementById('alert-container');
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-success alert-dismissible fade show';
+        alertDiv.role = 'alert';
+        alertDiv.innerHTML = message + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
+
+        alertContainer.appendChild(alertDiv);
+
+        setTimeout(() => {
+            $(alertDiv).alert('close');
+        }, 5000); // Auto close the alert after 5 seconds
     }
 </script>
 
@@ -53,17 +80,12 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'about' %}">About</a>
                     </li>
-                    <li class="nav-item">
-                        <span class="navbar-text">
-                            {{ request.user.first_name|default:request.user.username }}
-                        </span>
-                    </li>
                     {% if request.user.is_authenticated %}
                     <li class="nav-item">
                         <form action="{% url 'logout' %}" method="post" style="display: inline;">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-link nav-link"
-                                style="display: inline; ">Logout</button>
+                                style="display: inline; ">Logout ({{ request.user.first_name|default:request.user.username }})</button>
                         </form>
                     </li>
                     {% else %}
@@ -79,11 +101,25 @@
         </nav>
     </header>
 
+    <!-- Notification banner -->
+    <!-- <div id="notification-banner" class="alert alert-warning alert-dismissible fade show" role="alert">
+        <span id="notification-message"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div> -->
+
+    <div id="alert-container" style="position: fixed; top: 20px; right: 20px; width: 300px; z-index: 9999;">
+        <!-- Alerts will be added here -->
+    </div>
+
     <main role="main" class="container">
         <!-- Main content block where child templates will insert content -->
         {% block content %}
         {% endblock content %}
     </main>
+    
+    <br>
 
     <footer class="footer bg-dark text-white text-center py-3">
         <div class="container">

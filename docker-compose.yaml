@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./.data/postgres-data:/var/lib/postgresql/data  # Maps local directory to PostgreSQL data directory
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    volumes:
+      - ./.data/rabbitmq-data:/var/lib/rabbitmq  # Maps local directory to RabbitMQ data directory
+    ports:
+      - "5672:5672"  # default RabbitMQ port
+      - "15672:15672"  # management plugin
+    restart: unless-stopped
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"  # Default Redis port
+    volumes:
+      - ./.data/redis-data:/data  # Maps local directory to Redis data directory
+    restart: unless-stopped
+
+  # django:
+  #   build: .
+  #   command: python manage.py runserver 0.0.0.0:8000
+  #   volumes:
+  #     - .:/app
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #     - redis
+  #   environment:
+  #     - DEBUG=1
+  #   restart: unless-stopped
+
+  # celery:
+  #   build: .
+  #   command: celery -A my_project worker -l info
+  #   volumes:
+  #     - .:/app
+  #   depends_on:
+  #     - postgres
+  #     - rabbitmq
+  #     - redis
+  #   environment:
+  #     - DEBUG=1
+  #   restart: unless-stopped
+
+# volumes:
+#   postgres-data:
+#   rabbitmq-data:

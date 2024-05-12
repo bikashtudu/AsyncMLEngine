@@ -1,4 +1,49 @@
-# Tasks
+# Service Overview
+
+The service primarily revolves around a Django-based application designed to handle asynchronous workloads with real-time user interaction capabilities. Below is a detailed breakdown:
+
+## User Authentication
+- **Base Functions:**
+  - Includes essential pages like Home, About, and user-specific features such as login, signup, and logout functionalities.
+- **Navigation Enhancements:**
+  - Once authenticated, the user's username is displayed in the navigation bar, enhancing the personalized user experience.
+
+## Websocket Connection
+- **User-Specific Connection:**
+  - Establishes a websocket connection on page load if the user is authenticated, allowing real-time communication.
+- **Redis Integration:**
+  - Utilizes Redis channels for distributed messaging, ensuring scalability and responsiveness across different services.
+
+## Asynchronous Task Management
+- **REST API:**
+  - Facilitates the asynchronous queuing of workloads via RESTful calls, seamlessly integrating front-end activities with server-side processing.
+- **Celery Worker:**
+  - Processes the enqueued tasks asynchronously, ensuring efficient management of compute resources.
+- **Real-Time Notifications:**
+  - Upon completion of tasks, notifications are promptly sent to the user, ensuring they are kept in the loop about the status of their operations.
+
+## UI Components
+
+### Home Page
+- Features interactive elements such as a button to initiate tasks and a display for recent tasks, coupled with live notifications for completed tasks.
+
+### About Page
+- Provides comprehensive information about the service, outlining its functionalities and the technology stack utilized.
+
+## Background Worker
+- Dedicated to processing tasks queued by the REST API. This component also handles sending notifications back to the user, confirming the completion of tasks.
+
+# UI screenshot
+![UI screenshot with notifications](assets/images/UI_Screenshot.png)
+
+# Tech Stack
+
+1. **Framework**: Django + Django Channels + Celery
+2. **RabbitMQ**: Celery broker for the async tasks execution in the background.
+3. **Redis**: Django Channels backend for distributed messaging between the background task and channel service.
+4. **PostgreSQL**: Database for maintaining users and Celery backend for maintaining tasks.
+
+# Tasks Checklist
 
 - [x]  User authentication
     - [x]  Base page, Home page, and About page
@@ -13,40 +58,3 @@
 - [x]  REST API call to queue workload asynchronously
 - [x]  Celery worker for processing workload from queue
 - [x]  Notification upon completion of the async workload
-
-# UI screenshot
-![UI screenshot with notifications](assets/images/UI_Screenshot.png)
-
-
-# Components
-
-## 1. Django Service:
-### 1.1 API Service:
-   - Enqueue workloads asynchronously from a queue.
-   - Task model for maintaining task status and results.
-   - Retrieve recent tasks for the user.
-### 1.2 UI Service:
-#### 1.2.1 Home Page:
-   - Button to queue tasks.
-   - Fetch and display recent tasks for the user.
-   - Live notifications when tasks are completed.
-#### 1.2.2 About Page:
-   - Information about the service and its functionalities.
-### 1.3 Auth Service:
-   - Signup, signin, and logout UI and APIs.
-   - Open a websocket upon authorization for sending real-time notifications to the user.
-   - Pull messages from the user channel and notify the user over the websocket.
-
-## 2. Background Worker:
-### 2.1 Task Service:
-   - Dequeue workload from the queue, start processing, and store the result in the database.
-   - Send messages to the user channel to notify the user when a task is completed.
-
-# Tech Stack
-
-1. **Framework**: Django + Django Channels + Celery
-2. **RabbitMQ**: Celery broker for the async tasks execution in the background.
-3. **Redis**: Django Channels backend for distributed messaging between the background task and channel service.
-4. **PostgreSQL**: Database for maintaining users and Celery backend for maintaining tasks.
-
-
